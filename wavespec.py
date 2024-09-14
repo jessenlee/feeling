@@ -6,7 +6,7 @@ def read_waveforms(file_path):
     waveforms = []
     with open(file_path, 'r') as file:
         for i, line in enumerate(file):
-            if i % 2 == 1:  # 只处理偶数行
+            if i % 2 == 1 & i<40000:  # 只处理偶数行
                 waveform = np.fromstring(line, sep=' ')
                 waveform = waveform[1:8000]  # 只取前10000个数据点
                 waveforms.append(waveform)
