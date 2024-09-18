@@ -6,7 +6,7 @@ def read_waveforms(file_path):
     waveforms = []
     with open(file_path, 'r') as file:
         for i, line in enumerate(file):
-            if i % 2 == 1 & i<40000:  # 只处理偶数行
+            if i % 2 == 1 & i<400:  # 只处理偶数行
                 waveform = np.fromstring(line, sep=' ')
                 waveform = waveform[1:8000]  # 只取前10000个数据点
                 waveforms.append(waveform)
@@ -15,12 +15,12 @@ def read_waveforms(file_path):
 # 扣除基线
 def subtract_baseline(waveform, num_baseline_points=50):
     baseline = np.mean(waveform[:num_baseline_points])
-    return waveform - baseline
+    return baseline
 
 # 对单个波形进行数值积分
-def integrate_waveform(waveform, threshold=-15):
-    baseline = np.mean(waveform[:50])
-    return np.sum(waveform[waveform < baseline-5])
+def integrate_waveform(waveform, baseline,threshold=-15):
+    #baseline = np.mean(waveform[:50])
+    return np.sum(waveform[waveform-baseline <-20])
 
 # 绘制能谱图
 def plot_spectrum(integrals):
@@ -50,12 +50,12 @@ def plot_waveform(waveform):
 def main():
     input_file = r'G:\alpha能谱Ar.txt'  # 你的TXT文件路径
     waveforms = read_waveforms(input_file)
-    processed_waveforms = []
+    baselines = []
     i=0
     for waveform in waveforms:
-        processed_waveform = subtract_baseline(waveform)
-        processed_waveforms.append(processed_waveform)
-    integrals = [abs(integrate_waveform(waveform)) for waveform in processed_waveforms]
+        baseline= subtract_baseline(waveform)
+        baselines.append(baseline)
+    integrals = [abs(integrate_waveform(waveform,baseline)) for waveform in waveforms]
     plot_spectrum(integrals)
 
 
